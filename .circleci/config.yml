@@ -1,12 +1,36 @@
+# This config was automatically generated from your source code
+# Stacks detected: deps:python:Transfer_ViT
 version: 2.1
+orbs:
+  python: circleci/python@2
 jobs:
-  build:
+  test-python:
+    # Install dependencies and run tests
     docker:
-      - image: cimg/base:current
-    resource_class: undefined
+      - image: cimg/python:3.8-node
+    working_directory: ~/project/Transfer_ViT
     steps:
-      - run: echo "Hi I'm on a Container Runner!"
+      - checkout:
+          path: ~/project
+      - python/install-packages
+      - run:
+          name: Run tests
+          command: pytest --junitxml=junit.xml || ((($? == 5)) && echo 'Did not find any tests to run.')
+      - store_test_results:
+          path: junit.xml
+  deploy:
+    # This is an example deploy job, not actually used by the workflow
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Replace this with steps to deploy to users
+      - run:
+          name: deploy
+          command: '#e.g. ./deploy.sh'
 workflows:
-  build-workflow:
+  build-and-test:
     jobs:
-      - build
+      - test-python
+    # - deploy:
+    #     requires:
+    #       - test-python
