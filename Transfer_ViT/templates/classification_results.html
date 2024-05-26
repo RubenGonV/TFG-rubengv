@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            position: relative;
+        }
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #999;
+            color: white;
+            border: none;
+            padding: 0.5em 1em;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 5px;
+            transition: background 0.3s;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #863d3d;
+        }
+        .info-icon {
+            display: inline-block;
+            margin-left: 10px;
+            width: 16px;
+            height: 16px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            position: relative;
+        }
+        .info-icon:hover .tooltip {
+            display: block;
+        }
+        .tooltip {
+            display: none;
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 200px;
+            text-align: left;
+            z-index: 10;
+        }
+        .summary {
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .summary-column {
+            flex: 1;
+            text-align: center;
+        }
+        .summary p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #333;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            width: 100%;
+            padding: 10px;
+            padding-left: 100px;
+            padding-right: 100px;
+            box-sizing: border-box;
+        }
+        .image-card {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        img {
+            width: 100%;
+            height: auto;
+            max-width: 150px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .predictions {
+            width: 100%;
+            text-align: left;
+        }
+        .predictions h3 {
+            margin: 5px 0;
+            font-size: 1em;
+            color: #333;
+        }
+        .predictions p {
+            margin: 2px 0;
+            font-size: 0.8em;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .incorrect {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="" class="back-button">Back</a>
+        Classification Results
+    </header>
+    <div class="summary">
+        <div class="summary-column">
+            <p><strong>Accuracy</strong></p>
+            <p>ResNet Accuracy: {{ resnet_accuracy | round(2) }}%</p>
+            <p>VGG Accuracy: {{ vgg_accuracy | round(2) }}%</p>
+            <p>Clip Accuracy: {{ clip_accuracy | round(2) }}%</p>
+        </div>
+        <div class="summary-column">
+            <p><strong>Top-3 Accuracy</strong></p>
+            <p>ResNet Top-3 Accuracy: {{ resnet_top3_accuracy | round(2) }}%</p>
+            <p>VGG Top-3 Accuracy: {{ vgg_top3_accuracy | round(2) }}%</p>
+            <p>Clip Top-3 Accuracy: {{ clip_top3_accuracy | round(2) }}%</p>
+        </div>
+        <div class="summary-column">
+            <p><strong>F1 Score</strong></p>
+            <p>ResNet F1 Score: {{ (resnet_f1 * 100) | round(2) }}%</p>
+            <p>VGG F1 Score: {{ (vgg_f1 * 100) | round(2) }}%</p>
+            <p>Clip F1 Score: {{ (clip_f1 * 100) | round(2) }}%</p>
+            <div class="info-icon">i
+                <div class="tooltip">
+                    F1 Score is a measure of a test's accuracy. It considers both the precision and the recall of the test to compute the score. The F1 score can be interpreted as a weighted average of the precision and recall, where an F1 score reaches its best value at 1 (perfect precision and recall) and worst at 0.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        {% for result in results %}
+        <div class="image-card">
+            <img src="data:image/png;base64,{{ result.image_data }}" alt="Classified Image">
+            <div class="predictions">
+                <p>Actual: <strong>{{ result.actual_label }}</strong></p>
+                <h3>ResNet Predictions:</h3>
+                {% for pred in result.resnet_predictions %}
+                <p class="{{ 'correct' if pred[0] == labels.index(result.actual_label) else 'incorrect' }}">
+                    {{ labels[pred[0]] }} - {{ (pred[1] * 100) | round(2) }}%
+                </p>
+                {% endfor %}
+                <p>Classification Time: {{ result.resnet_time | round(2) }} seconds</p>
+                <h3>VGG Predictions:</h3>
+                {% for pred in result.vgg_predictions %}
+                <p class="{{ 'correct' if pred[0] == labels.index(result.actual_label) else 'incorrect' }}">
+                    {{ labels[pred[0]] }} - {{ (pred[1] * 100) | round(2) }}%
+                </p>
+                {% endfor %}
+                <p>Classification Time: {{ result.vgg_time | round(2) }} seconds</p>
+                <h3>Clip Predictions:</h3>
+                {% for pred in result.clip_predictions %}
+                <p class="{{ 'correct' if pred[0] == labels.index(result.actual_label) else 'incorrect' }}">
+                    {{ labels[pred[0]] }} - {{ (pred[1] * 100) | round(2) }}%
+                </p>
+                {% endfor %}
+                <p>Classification Time: {{ result.clip_time | round(2) }} seconds</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

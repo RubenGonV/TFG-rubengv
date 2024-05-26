@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Dataset</title>
+    <style>
+        /* Existing styles remain the same */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+            font-size: 1.5em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-top: 1em;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1000px;
+            margin: 2em auto;
+            padding: 1em;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 1em;
+            padding: 2em;
+            text-align: center;
+            flex: 1 1 200px;
+            max-width: 300px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card.full-width {
+            max-width: none;
+            flex: 1 1 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .card img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 1em;
+        }
+        .card h2 {
+            font-size: 1.2em;
+            margin: 1em 0;
+            color: #333;
+        }
+        .card p {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 1em;
+        }
+        .card form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card label {
+            font-size: 1em;
+            color: #333;
+            margin-bottom: 0.5em;
+        }
+        .card input[type="number"], .card select, .card input[type="file"], .card input[type="text"] {
+            width: 100%;
+            max-width: 200px;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            text-align: center;
+        }
+        .card button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 0.5em 1em;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .card button:hover {
+            background: #555;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+        }
+        .overlay .close-btn {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            background: transparent;
+            border: transparent;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .card-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+        @media (max-width: 600px) {
+            .container {
+                flex-direction: column;
+                padding: 1em;
+            }
+            .card {
+                max-width: 100%;
+                margin: 0.5em 0;
+            }
+            .card.full-width {
+                margin: 1em 0;
+            }
+            .card input[type="number"], .card select, .card input[type="file"], .card input[type="text"], .card button {
+                width: 100%;
+            }
+            .card-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Zero-Shot Learning Classification
+    </header>
+    <h1>Select Dataset for Classification</h1>
+    <div class="container">
+        <div class="card">
+            <img src="https://datasets.activeloop.ai/wp-content/uploads/2022/09/CIFAR-10-dataset-Activeloop-Platform-visualization-image-1.webp" alt="CIFAR-10">
+            <h2>CIFAR-10</h2>
+            <p>60,000 32x32 color images in 10 classes, with 6,000 images per class.</p>
+            <form action="/classify" method="post">
+                <label for="number">Select number of images (1-200): </label>
+                <input type="number" id="number" name="number" min="1" max="200" value="10">
+                <button type="submit" name="dataset" value="cifar10">Classify Random CIFAR-10 Images</button>
+            </form>
+        </div>
+        <div class="card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/27/MnistExamples.png" alt="MNIST">
+            <h2>MNIST</h2>
+            <p>A dataset of 60,000 small square 28x28 pixel grayscale images of handwritten digits.</p>
+            <form action="/classify" method="post">
+                <label for="number">Select number of images (1-200): </label>
+                <input type="number" id="number" name="number" min="1" max="200" value="10">
+                <button type="submit" name="dataset" value="mnist">Classify Random MNIST Images</button>
+            </form>
+        </div>
+        <div class="card">
+            <img src="https://github.com/zalandoresearch/fashion-mnist/raw/master/doc/img/fashion-mnist-sprite.png" alt="Fashion MNIST">
+            <h2>Fashion MNIST</h2>
+            <p>A dataset of 70,000 28x28 grayscale images of 10 fashion categories, such as t-shirts, trousers, and sneakers.</p>
+            <form action="/classify" method="post">
+                <label for="number">Select number of images (1-200): </label>
+                <input type="number" id="number" name="number" min="1" max="200" value="10">
+                <button type="submit" name="dataset" value="fashion_mnist">Classify Random Fashion MNIST Images</button>
+            </form>
+        </div>
+        <div class="card-group">
+            <div class="card">
+                <h2>Upload Your Image</h2>
+                <form id="uploadForm" action="/classify" method="post" enctype="multipart/form-data">
+                    <label for="label_set">Select Label Set:</label>
+                    <select id="label_set" name="label_set">
+                        <option value="cifar10">CIFAR-10</option>
+                        <option value="imagenet">ImageNet</option>
+                        <option value="mnist">MNIST</option>
+                    </select>
+                    <label for="file">Upload an Image:</label>
+                    <input type="file" id="file" name="file" accept="image/*" required>
+                    <input type="hidden" id="use_custom_labels" name="use_custom_labels" value="false">
+                    <button type="submit">Classify Image</button>
+                </form>
+            </div>
+            <div class="card">
+                <h2>Classify with Custom Labels (only CLIP) </h2>
+                <form id="customLabelForm" action="/classify_custom" method="post" enctype="multipart/form-data">
+                    <label for="custom_labels_only">Write Your Own Labels (comma-separated):</label>
+                    <input type="text" id="custom_labels_only" name="custom_labels_only" placeholder="e.g., cat, dog, car" required>
+                    <label for="file_custom">Upload an Image:</label>
+                    <input type="file" id="file_custom" name="file_custom" accept="image/*" required>
+                    <button type="submit">Classify Image with Custom Labels</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="overlay" id="overlay">
+        <button class="close-btn" id="closeBtn">&times;</button>
+        Classifying...
+    </div>
+    <script>
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function() {
+                document.getElementById('overlay').style.display = 'flex';
+            });
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            fetch('/stop_classification', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '/';
+                });
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            const customLabels = document.getElementById('custom_labels').value;
+            if (customLabels.trim() !== '') {
+                document.getElementById('use_custom_labels').value = 'true';
+            } else {
+                document.getElementById('use_custom_labels').value = 'false';
+            }
+        });
+    </script>
+</body>
+</html>
